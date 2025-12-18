@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Seleccionar Habitación - {{ hotel.nombre }}{% endblock %}
+
+{% block content %}
+<div class="reserva-container">
+    <!-- Pasos del proceso -->
+    <div class="reserva-steps">
+        <div class="reserva-step completed">
+            <div class="step-circle">1</div>
+            <span class="step-label">Fecha y Personas</span>
+        </div>
+        <div class="reserva-step active">
+            <div class="step-circle">2</div>
+            <span class="step-label">Seleccionar Habitación</span>
+        </div>
+        <div class="reserva-step">
+            <div class="step-circle">3</div>
+            <span class="step-label">Datos Personales</span>
+        </div>
+        <div class="reserva-step">
+            <div class="step-circle">4</div>
+            <span class="step-label">Confirmación</span>
+        </div>
+    </div>
+    
+    <!-- Resumen de búsqueda -->
+    <div class="reserva-summary mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h4 class="mb-3">{{ hotel.nombre }}</h4>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge bg-primary">
+                        <i class="fas fa-calendar me-1"></i> {{ fecha_formateada }}
+                    </span>
+                    <span class="badge bg-success">
+                        <i class="fas fa-users me-1"></i> {{ cantidad_personas }} persona{{ cantidad_personas|pluralize }}
+                    </span>
+                    <span class="badge bg-info">
+                        <i class="fas fa-bed me-1"></i> {{ total_disponibles }} disponible{{ total_disponibles|pluralize }}
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{% url 'reservar_hotel' hotel.id %}" class="btn-secondary">
+                    <i class="fas fa-edit me-1"></i> Cambiar fecha/personas
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filtro por plazas -->
+    {% if habitaciones_por_plazas %}
+    <div class="filter-buttons mb-4">
+        <button class="filter-btn active" data-filter="todas">
+            Todas ({{ total_disponibles }})
+        </button>
+        {% for plazas, habitaciones_list in habitaciones_por_plazas.items %}
+        <button class="filter-btn" data-filter="{{ plazas }}">
+            {{ plazas }} plaza{{ plazas|pluralize }} ({{ habitaciones_list|length }})
+        </button>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Formulario de selección -->
+    <form method="POST" id="habitacionForm">
+        {% csrf_token %}
+        
+        {% if habitaciones_disponibles %}
+            <!-- Habitaciones agrupadas por plazas -->
+            {% for plazas, habitaciones_list in habitaciones_por_plazas.items %}
+            <div class="habitacion-grupo" id="grupo-{{ plazas }}">
+                <h4 class="mb-3">
+                    <i class="fas fa-user-friends me-2"></i>
+                    Habitaciones de {{ plazas }} plaza{{ plazas|pluralize }}
+                </h4>
+                
+                <div class="row">
+                    {% for habitacion in habitaciones_list %}
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <!-- AQUÍ ESTÁ LA LÍNEA CORREGIDA: -->
+                        <div class="habitacion-card" 
+                             data-plazas="{{ habitacion.cantidad_plazas }}"
+                             data-habitacion-id="{{ habitacion.id }}"
+                             onclick="seleccionarHabitacion({{ habitacion.id }})">
+                            
+                            <div class="habitacion-header">
+                                <span class="habitacion-numero">Habitación {{ habitacion.numero }}</span>
+                                <span class="habitacion-plazas">{{ habitacion.cantidad_plazas }} plazas</span>
+                            </div>
+                            
+                            <div class="habitacion-detalle">
+                                <span>
+                                    <i class="fas fa-user-friends"></i>
+                                    Capacidad: {{ habitacion.cantidad_plazas }}
+                                </span>
+                                {% if habitacion.cantidad_plazas >= 3 %}
+                                <span>
+                                    <i class="fas fa-expand"></i>
+                                    Espaciosa
+                                </span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="habitacion-precio">
+                                <div class="precio">${{ habitacion.cantidad_plazas|add:"0"|floatformat:0 }}0</div>
+                                <div class="periodo">por noche</div>
+                            </div>
+                            
+                            <!-- Input hidden -->
+                            <input type="radio" 
+                                   name="habitacion_id" 
+                                   value="{{ habitacion.id }}" 
+                                   id="habitacion_{{ habitacion.id }}"
+                                   class="d-none" 
+                                   required>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Información de selección -->
+            <div class="alert alert-info alert-custom mt-4 d-none" id="seleccion-info">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span id="seleccion-text">Ninguna habitación seleccionada</span>
+                    </div>
+                    <button type="submit" class="btn-primary" id="btnContinuar" disabled>
+                        Continuar con datos personales 
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+            
+        {% else %}
+        <!-- No hay habitaciones -->
+        <div class="form-card text-center py-5">
+            <div class="confirmacion-icon">
+                <i class="fas fa-bed"></i>
+            </div>
+            <h3 class="confirmacion-titulo">No hay habitaciones disponibles</h3>
+            <p class="confirmacion-subtitulo">
+                No encontramos habitaciones para {{ cantidad_personas }} persona{{ cantidad_personas|pluralize }} 
+                el {{ fecha_formateada }}.
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'reservar_hotel' hotel.id %}" class="btn-primary">
+                    <i class="fas fa-calendar-alt me-1"></i> Cambiar fecha
+                </a>
+                <a href="{% url 'home' %}" class="btn-secondary">
+                    <i class="fas fa-hotel me-1"></i> Ver otros hoteles
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </form>
+</div>
+
+<script>
+// Función para seleccionar habitación
+function seleccionarHabitacion(habitacionId) {
+    console.log("Seleccionando habitación ID:", habitacionId);
+    
+    // Deseleccionar todas las habitaciones
+    document.querySelectorAll('.habitacion-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    
+    // Deseleccionar todos los radio buttons
+    document.querySelectorAll('input[name="habitacion_id"]').forEach(radio => {
+        radio.checked = false;
+    });
+    
+    // Seleccionar la nueva habitación
+    const card = document.querySelector(`.habitacion-card[data-habitacion-id="${habitacionId}"]`);
+    const radioInput = document.getElementById(`habitacion_${habitacionId}`);
+    
+    if (card && radioInput) {
+        // Marcar como seleccionada
+        card.classList.add('selected');
+        radioInput.checked = true;
+        
+        // Actualizar información de selección
+        const seleccionInfo = document.getElementById('seleccion-info');
+        const seleccionText = document.getElementById('seleccion-text');
+        const btnContinuar = document.getElementById('btnContinuar');
+        
+        if (seleccionInfo && seleccionText && btnContinuar) {
+            const numero = card.querySelector('.habitacion-numero').textContent;
+            const plazas = card.querySelector('.habitacion-plazas').textContent;
+            
+            seleccionText.textContent = `${numero} - ${plazas} seleccionada`;
+            seleccionInfo.classList.remove('d-none');
+            btnContinuar.disabled = false;
+            
+            // Scroll suave a la información
+            setTimeout(() => {
+                seleccionInfo.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 300);
+        }
+    } else {
+        console.error("No se encontró la habitación con ID:", habitacionId);
+    }
+}
+
+// Filtros por cantidad de plazas
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // Actualizar botón activo
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const filter = this.getAttribute('data-filter');
+        
+        // Mostrar/ocultar grupos de habitaciones
+        document.querySelectorAll('.habitacion-grupo').forEach(grupo => {
+            if (filter === 'todas') {
+                grupo.style.display = 'block';
+            } else if (grupo.id === `grupo-${filter}`) {
+                grupo.style.display = 'block';
+            } else {
+                grupo.style.display = 'none';
+            }
+        });
+    });
+});
+
+// Validación del formulario
+document.getElementById('habitacionForm').addEventListener('submit', function(e) {
+    const radioSeleccionado = document.querySelector('input[name="habitacion_id"]:checked');
+    
+    if (!radioSeleccionado) {
+        e.preventDefault();
+        alert('Por favor selecciona una habitación antes de continuar.');
+        return false;
+    }
+    
+    console.log("Enviando formulario con habitación ID:", radioSeleccionado.value);
+});
+</script>
+{% endblock %}

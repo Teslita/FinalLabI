@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hoteles Disponibles{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Hoteles Disponibles</h1>
+    
+    <!-- Filtros (opcional) -->
+    <div class="filters-card mb-4 p-3 bg-white rounded shadow-sm">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Buscar hotel..." id="searchInput">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="sortSelect">
+                    <option value="name">Ordenar por nombre</option>
+                    <option value="rooms">Más habitaciones primero</option>
+                    <option value="rating">Mejor valorados</option>
+                </select>
+            </div>
+            <div class="col-md-5 text-end">
+                <span class="text-muted">
+                    <i class="fas fa-hotel me-1"></i>
+                    {{ hoteles.paginator.count }} hoteles encontrados
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Grid de hoteles -->
+    {% if hoteles.object_list %}
+    <div class="hoteles-grid">
+        {% for hotel in hoteles.object_list %}
+        <div class="hotel-card">
+            <!-- Badge (opcional) -->
+            {% if forloop.counter <= 3 %}
+            <div class="hotel-badge">
+                {% if forloop.counter == 1 %}Recomendado{% else %}Popular{% endif %}
+            </div>
+            {% endif %}
+            
+            <!-- Imagen del hotel -->
+            <div class="hotel-img-container">
+                <div class="img-overlay"></div>
+                {% if hotel.foto and hotel.foto.url %}
+                <img src="/static/hoteles/ushuaia_hotel_{{ hotel.id }}.jpg"
+                    alt="{{ hotel.nombre }}"
+                    class="hotel-ing">
+                {% else %}
+                <img src="{% static 'imagenes/default-hotel.jpg' %}" 
+                     alt="Imagen por defecto" 
+                     class="hotel-img">
+                {% endif %}
+            </div>
+            
+            <!-- Información del hotel -->
+            <div class="hotel-info">
+                <!-- Nombre -->
+                <h3 class="hotel-name">{{ hotel.nombre }}</h3>
+                
+                <!-- Dirección -->
+                <div class="hotel-address">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{ hotel.direccion|truncatechars:40 }}</span>
+                </div>
+                
+                <!-- Descripción -->
+                <p class="hotel-description">
+                    {{ hotel.reseña|truncatechars:120 }}
+                </p>
+                
+                <!-- Características -->
+                <div class="hotel-features">
+                    <span class="feature-badge">
+                        <i class="fas fa-bed"></i>
+                        {{ hotel.cantidad_habitaciones }} hab.
+                    </span>
+                    <span class="feature-badge">
+                        <i class="fas fa-user-friends"></i>
+                        {{ hotel.cantidad_habitaciones|add:"10" }} plazas
+                    </span>
+                    <span class="feature-badge available">
+                        <i class="fas fa-check-circle"></i>
+                        Disponible
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Pie de tarjeta -->
+            <div class="hotel-footer">
+                <!-- Precio -->
+                <div class="hotel-price">
+                    <span class="price-label">Desde</span>
+                    <span class="price-amount">${{ hotel.cantidad_habitaciones|add:"5" }}0</span>
+                    <span class="price-period">/noche</span>
+                </div>
+                
+                <!-- Botón de reserva -->
+                <a href="{% url 'reservar_hotel' hotel.id %}" class="reserve-btn">
+                    <i class="fas fa-calendar-check"></i>
+                    Reservar
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Paginación -->
+    {% if hoteles.has_other_pages %}
+    <div class="pagination-container">
+        <div class="pagination-info">
+            Mostrando página {{ hoteles.number }} de {{ hoteles.paginator.num_pages }}
+            • {{ hoteles.paginator.count }} hoteles en total
+        </div>
+        
+        <nav aria-label="Paginación">
+            <ul class="pagination">
+                <!-- Anterior -->
+                {% if hoteles.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ hoteles.previous_page_number }}">
+                        <i class="fas fa-chevron-left"></i> Anterior
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        <i class="fas fa-chevron-left"></i> Anterior
+                    </span>
+                </li>
+                {% endif %}
+                
+                <!-- Números de página -->
+                {% for i in hoteles.paginator.page_range %}
+                    {% if hoteles.number == i %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ i }}</span>
+                    </li>
+                    {% elif i > hoteles.number|add:'-3' and i < hoteles.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                <!-- Siguiente -->
+                {% if hoteles.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ hoteles.next_page_number }}">
+                        Siguiente <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        Siguiente <i class="fas fa-chevron-right"></i>
+                    </span>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <!-- No hay hoteles -->
+    <div class="hotel-card-empty">
+        <i class="fas fa-hotel"></i>
+        <h4>No hay hoteles disponibles</h4>
+        <p>No se encontraron hoteles con los criterios de búsqueda actuales.</p>
+        <a href="{% url 'lista_hoteles' %}" class="btn btn-primary mt-3">
+            <i class="fas fa-sync-alt"></i> Ver todos los hoteles
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Script para búsqueda y filtros (opcional) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const hotelCards = document.querySelectorAll('.hotel-card');
+    
+    // Búsqueda en tiempo real
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            hotelCards.forEach(card => {
+                const hotelName = card.querySelector('.hotel-name').textContent.toLowerCase();
+                const hotelAddress = card.querySelector('.hotel-address span').textContent.toLowerCase();
+                const hotelDescription = card.querySelector('.hotel-description').textContent.toLowerCase();
+                
+                if (hotelName.includes(searchTerm) || 
+                    hotelAddress.includes(searchTerm) || 
+                    hotelDescription.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
+    
+    // Efecto hover mejorado
+    hotelCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.zIndex = '10';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.zIndex = '1';
+        });
+    });
+});
+</script>
+{% endblock %}

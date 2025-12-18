@@ -1,0 +1,388 @@
+/* ============================================
+   CSS PROFESIONAL PARA TARJETAS DE HOTELES
+   ============================================ */
+
+/* Contenedor principal */
+.hoteles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    padding: 20px 0;
+}
+
+/* Tarjeta principal */
+.hotel-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.hotel-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    border-color: rgba(13, 110, 253, 0.2);
+}
+
+/* Badge "Nuevo" o "Popular" */
+.hotel-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 2;
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+}
+
+/* Imagen del hotel */
+.hotel-img-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.hotel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.hotel-card:hover .hotel-img {
+    transform: scale(1.08);
+}
+
+/* Overlay para imagen */
+.img-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 50%);
+    z-index: 1;
+}
+
+/* Información de la tarjeta */
+.hotel-info {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Nombre del hotel */
+.hotel-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 8px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Dirección */
+.hotel-address {
+    color: #718096;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.hotel-address i {
+    color: #4a5568;
+    margin-top: 3px;
+}
+
+/* Reseña/descripción */
+.hotel-description {
+    color: #4a5568;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Características (badges) */
+.hotel-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.feature-badge {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    color: #4a5568;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.feature-badge:hover {
+    background: #edf2f7;
+    transform: translateY(-2px);
+}
+
+.feature-badge i {
+    color: #4299e1;
+}
+
+/* Pie de tarjeta */
+.hotel-footer {
+    padding: 15px 20px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    border-radius: 0 0 16px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Precio */
+.hotel-price {
+    text-align: right;
+}
+
+.price-label {
+    display: block;
+    color: #718096;
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+}
+
+.price-amount {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2d3748;
+    line-height: 1;
+}
+
+.price-period {
+    font-size: 0.9rem;
+    color: #718096;
+    font-weight: normal;
+}
+
+/* Botón de reserva */
+.reserve-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.reserve-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.reserve-btn i {
+    font-size: 0.9rem;
+}
+
+/* Estado de disponibilidad */
+.availability-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.available {
+    background: rgba(72, 187, 120, 0.1);
+    color: #38a169;
+}
+
+.low-availability {
+    background: rgba(246, 173, 85, 0.1);
+    color: #d69e2e;
+}
+
+/* Rating de estrellas */
+.hotel-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.stars {
+    color: #f6ad55;
+    font-size: 0.9rem;
+}
+
+.rating-score {
+    background: #f6ad55;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: 5px;
+}
+
+/* Efectos especiales */
+.hotel-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.hotel-card:hover::before {
+    opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hoteles-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 15px 0;
+    }
+    
+    .hotel-card {
+        border-radius: 14px;
+    }
+    
+    .hotel-img-container {
+        height: 180px;
+    }
+    
+    .hotel-info {
+        padding: 15px;
+    }
+    
+    .hotel-name {
+        font-size: 1.2rem;
+    }
+    
+    .reserve-btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hoteles-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .hotel-footer {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    .hotel-price {
+        text-align: center;
+    }
+    
+    .reserve-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hotel-card {
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+}
+
+.hotel-card:nth-child(1) { animation-delay: 0.1s; }
+.hotel-card:nth-child(2) { animation-delay: 0.2s; }
+.hotel-card:nth-child(3) { animation-delay: 0.3s; }
+.hotel-card:nth-child(4) { animation-delay: 0.4s; }
+.hotel-card:nth-child(5) { animation-delay: 0.5s; }
+.hotel-card:nth-child(6) { animation-delay: 0.6s; }
+
+/* Tarjetas vacías/placeholder */
+.hotel-card-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    background: #f8fafc;
+    border: 2px dashed #cbd5e0;
+    border-radius: 16px;
+}
+
+.hotel-card-empty i {
+    font-size: 3rem;
+    color: #a0aec0;
+    margin-bottom: 15px;
+}
+
+.hotel-card-empty h4 {
+    color: #718096;
+    margin-bottom: 10px;
+}
+
+.hotel-card-empty p {
+    color: #a0aec0;
+    font-size: 0.9rem;
+}

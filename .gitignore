@@ -1,0 +1,44 @@
+# Django
+*.pyc
+__pycache__/
+db.sqlite3
+*.log
+*.pot
+
+# Entornos virtuales
+venv/
+env/
+ENV/
+.vscode/
+
+# Archivos de IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos media/subidos por usuarios (IMPORTANTE)
+media/
+!media/.gitkeep
+
+# Archivos estáticos generados
+staticfiles/
+
+# Variables de entorno
+.env
+.env.local
+.env.*.local
+
+# Backups de templates
+*.bak
+
+# Imágenes descargadas (NO subir)
+ushuaia_hotel_*.jpg
+hotel_*.jpg
+
+# Django secret key
+secret_key.txt

@@ -1,0 +1,93 @@
+/* ============================================
+   CSS PARA PAGINACIÓN ELEGANTE
+   ============================================ */
+
+.pagination-container {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.pagination-info {
+    text-align: center;
+    color: #718096;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.page-item {
+    margin: 0 2px;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    color: #4a5568;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.page-link:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+    transform: translateY(-2px);
+    color: #2d3748;
+}
+
+.page-item.active .page-link {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.page-item.disabled .page-link {
+    background: #f7fafc;
+    color: #cbd5e0;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.page-item:first-child .page-link,
+.page-item:last-child .page-link {
+    padding: 0 20px;
+    min-width: auto;
+}
+
+.page-link i {
+    font-size: 0.9rem;
+}
+
+/* Paginación responsive */
+@media (max-width: 768px) {
+    .pagination {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .page-link {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 10px;
+        font-size: 0.9rem;
+    }
+    
+    .page-item:first-child .page-link,
+    .page-item:last-child .page-link {
+        padding: 0 15px;
+    }
+}

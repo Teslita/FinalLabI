@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirmación de Reserva #{{ reserva.id }}{% endblock %}
+
+{% block content %}
+<div class="reserva-container">
+    <!-- Pasos completados -->
+    <div class="reserva-steps">
+        <div class="reserva-step completed">
+            <div class="step-circle">1</div>
+            <span class="step-label">Fecha y Personas</span>
+        </div>
+        <div class="reserva-step completed">
+            <div class="step-circle">2</div>
+            <span class="step-label">Seleccionar Habitación</span>
+        </div>
+        <div class="reserva-step completed">
+            <div class="step-circle">3</div>
+            <span class="step-label">Datos Personales</span>
+        </div>
+        <div class="reserva-step active">
+            <div class="step-circle">4</div>
+            <span class="step-label">Confirmación</span>
+        </div>
+    </div>
+    
+    <!-- Confirmación principal -->
+    <div class="confirmacion-card">
+        <div class="confirmacion-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        
+        <h2 class="confirmacion-titulo">¡Reserva Confirmada!</h2>
+        
+        <p class="confirmacion-subtitulo">
+            Tu reserva ha sido procesada exitosamente. 
+            Hemos enviado un correo de confirmación a {{ reserva.huesped.email }}
+        </p>
+        
+        <!-- Código de reserva -->
+        <div class="reserva-detalle">
+            <div class="reserva-codigo">RES-{{ reserva.id|stringformat:"06d" }}</div>
+            <p class="text-center text-muted mb-4">Guarda este código para futuras consultas</p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="summary-item">
+                        <div class="summary-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="summary-content">
+                            <h5>Huésped</h5>
+                            <p>{{ reserva.huesped.nombre }}</p>
+                            <small>{{ reserva.huesped.email }}</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="summary-item">
+                        <div class="summary-icon">
+                            <i class="fas fa-hotel"></i>
+                        </div>
+                        <div class="summary-content">
+                            <h5>Hotel</h5>
+                            <p>{{ reserva.habitacion.hotel.nombre }}</p>
+                            <small>{{ reserva.habitacion.hotel.direccion }}</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="summary-item">
+                        <div class="summary-icon">
+                            <i class="fas fa-bed"></i>
+                        </div>
+                        <div class="summary-content">
+                            <h5>Habitación</h5>
+                            <p>N° {{ reserva.habitacion.numero }}</p>
+                            <small>{{ reserva.habitacion.cantidad_plazas }} plaza{{ reserva.habitacion.cantidad_plazas|pluralize }}</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="summary-item">
+                        <div class="summary-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="summary-content">
+                            <h5>Fecha</h5>
+                            <p>{{ reserva.fecha_reserva|date:"d/m/Y" }}</p>
+                            <small>{{ reserva.cantidad_personas }} persona{{ reserva.cantidad_personas|pluralize }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <div class="text-center">
+                <div class="price-total mb-2">
+                    ${{ reserva.habitacion.cantidad_plazas|add:"0"|floatformat:0 }}0
+                </div>
+                <div class="price-label">Total por noche</div>
+            </div>
+        </div>
+        
+        <!-- Estado de la reserva -->
+        <div class="alert alert-success alert-custom mt-4">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle me-3 fa-lg"></i>
+                <div>
+                    <h6 class="mb-1">Estado actual: {{ reserva.estado|title }}</h6>
+                    <p class="mb-0">
+                        {% if reserva.estado == 'pendiente' %}
+                        Tu reserva está pendiente de confirmación por parte del hotel.
+                        {% elif reserva.estado == 'confirmada' %}
+                        Tu reserva ha sido confirmada por el hotel.
+                        {% elif reserva.estado == 'cancelada' %}
+                        Tu reserva ha sido cancelada.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Acciones -->
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <a href="{% url 'home' %}" class="btn-primary">
+                <i class="fas fa-home me-2"></i> Volver al inicio
+            </a>
+            <a href="#" class="btn-secondary">
+                <i class="fas fa-print me-2"></i> Imprimir comprobante
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Mostrar alerta de éxito si viene de crear reserva
+window.onload = function() {
+    if (window.location.search.includes('success=true')) {
+        // Ya estamos mostrando la confirmación
+    }
+};
+</script>
+{% endblock %}
