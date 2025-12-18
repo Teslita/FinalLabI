@@ -37,8 +37,7 @@ staticfiles/
 *.bak
 
 # Imágenes descargadas (NO subir)
-ushuaia_hotel_*.jpg
-hotel_*.jpg
+
 
 # Django secret key
 secret_key.txt
